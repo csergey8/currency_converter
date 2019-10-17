@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import Paper from "@material-ui/core/Paper";
-import { getBaseCurr, getRates } from "../actions";
+import { getBaseCurr, getRates, getFavor, setFavor } from "../actions";
 import { connect } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -32,8 +32,8 @@ class Converter extends Component {
 
   handleFirstSelectChange = e => {
     this.setState({
-        firstCurr: e.target.value,
-        },
+      firstCurr: e.target.value,
+    },
       () => {
         this.props.dispatch(getRates(this.state.firstCurr)).then(() => {
           this.convert();
@@ -44,8 +44,8 @@ class Converter extends Component {
 
   handleSecondSelectChange = e => {
     this.setState({
-        secondCurr: e.target.value,
-      },
+      secondCurr: e.target.value,
+    },
       () => {
         this.convert();
       }
@@ -65,8 +65,8 @@ class Converter extends Component {
 
   handleInput = e => {
     this.setState({
-        inputField: e.target.value,
-      },
+      inputField: e.target.value,
+    },
       () => {
         this.convert();
       }
@@ -75,34 +75,46 @@ class Converter extends Component {
 
   render() {
     return (
-      <Paper>
-        <Select
-          value={this.state.firstCurr}
-          onChange={this.handleFirstSelectChange}
-        >
-          {this.state.selectCurr
-            ? this.state.selectCurr.map(item => (
-                <MenuItem value={item}>{item}</MenuItem>
-              ))
-            : null}
-        </Select>
-        <TextField onChange={this.handleInput} />
-        <Select
-          value={this.state.secondCurr}
-          onChange={this.handleSecondSelectChange}
-        >
-          {this.state.selectCurr
-            ? this.state.selectCurr.map(item => (
-                <MenuItem value={item}>{item}</MenuItem>
-              ))
-            : null}
-        </Select>
-        <TextField
-          InputProps={{
-            readOnly: true,
-          }}
-          value={this.state.result}
-        />
+      <Paper style={{
+        height: '40vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <Fragment>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Select
+              value={this.state.firstCurr}
+              onChange={this.handleFirstSelectChange}
+            >
+              {this.state.selectCurr
+                ? this.state.selectCurr.map(item => (
+                  <MenuItem key={item} value={item}>{item}</MenuItem>
+                ))
+                : null}
+            </Select>
+            <TextField onChange={this.handleInput} label="Amount" />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Select
+              value={this.state.secondCurr}
+              onChange={this.handleSecondSelectChange}
+            >
+              {this.state.selectCurr
+                ? this.state.selectCurr.map(item => (
+                  <MenuItem key={item} value={item}>{item}</MenuItem>
+                ))
+                : null}
+            </Select>
+            <TextField
+              InputProps={{
+                readOnly: true,
+              }}
+              label="Result"
+              value={this.state.result}
+            />
+          </div>
+        </Fragment>
       </Paper>
     );
   }

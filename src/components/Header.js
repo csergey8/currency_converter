@@ -4,12 +4,10 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Link } from "react-router-dom";
-import Typography from "@material-ui/core/Typography";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { connect } from 'react-redux';
-import { getBaseCurr, setBaseCurr, getRates } from './actions';
+import { getBaseCurr, setBaseCurr, getRates } from '../actions';
 
 class Layout extends Component {
   state = {
@@ -20,12 +18,11 @@ class Layout extends Component {
 
   componentDidMount() {
     this.props.dispatch(getBaseCurr())
-      this.setState({ 
-        baseCurr: this.props.baseCurr
-      })
+    this.setState({
+      baseCurr: this.props.baseCurr
+    })
     this.props.dispatch(getRates(this.props.baseCurr))
       .then(res => {
-        console.log(this.state.baseCurr)
         let currencyToSelect = []
         Object.keys(res.payload.rates).map(key => {
           currencyToSelect.push(key)
@@ -58,14 +55,14 @@ class Layout extends Component {
               value={this.state.baseCurr}
               onChange={this.handleSelectChange}
               variant="outlined"
-              style={{ color: '#fff'}}
+              style={{ color: '#fff' }}
             >
               {
                 this.state.selectCurr ?
-                this.state.selectCurr.map(item => (
-                  <MenuItem value={item}>{item}</MenuItem>
-                ))
-                : null
+                  this.state.selectCurr.map(item => (
+                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                  ))
+                  : null
               }
             </Select>
           </Toolbar>

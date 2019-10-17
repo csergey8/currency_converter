@@ -5,7 +5,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { getBaseCurr, getRates } from "../actions";
+import { getBaseCurr, getRates, getFavor, setFavor, unsetFavor } from "../actions";
 import { connect } from "react-redux";
 import StarIcon from "@material-ui/icons/Star";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
@@ -17,7 +17,14 @@ class ExchangeRates extends Component {
     favor: [],
   };
   componentDidMount() {
-    this.ratesInit();
+    this.props.dispatch(getFavor())
+      .then(() => {
+        this.setState({
+          favor: this.props.favor || []
+        }, () => {
+          this.ratesInit();
+        })
+      })
   }
 
   ratesInit = () => {
@@ -25,6 +32,8 @@ class ExchangeRates extends Component {
     this.setState({
       baseCurr: this.props.baseCurr,
     });
+
+
 
     this.props.dispatch(getRates(this.props.baseCurr)).then(res => {
       let newObj = {};
@@ -34,9 +43,11 @@ class ExchangeRates extends Component {
         newObj[key].favor = false;
       });
 
-      this.state.favor.map(item => {
-        newObj[item].favor = true;
-      });
+      if (this.state.favor.length > 0) {
+        this.state.favor.map(item => {
+          newObj[item].favor = true;
+        });
+      }
       let topList = {};
       let bottomList = {};
       Object.keys(newObj).map(key => {
@@ -47,12 +58,8 @@ class ExchangeRates extends Component {
         }
       });
       let filtered = { ...topList, ...bottomList };
-      console.log(filtered);
       this.setState({
         rates: filtered,
-      });
-      Object.keys(filtered).map(row => {
-        console.log(row);
       });
     });
   };
@@ -72,11 +79,11 @@ class ExchangeRates extends Component {
 
   setFavor = val => {
     let favor = this.state.favor;
+    this.props.dispatch(setFavor(val))
     favor.push(val);
-    this.setState(
-      {
-        favor,
-      },
+    this.setState({
+      favor
+    },
       () => {
         this.ratesInit();
       }
@@ -85,17 +92,14 @@ class ExchangeRates extends Component {
 
   unsetFavor = val => {
     let favor = this.state.favor.filter(item => item !== val);
-    this.setState(
-      {
-        favor,
-      },
+    this.props.dispatch(unsetFavor(val))
+    this.setState({ favor },
       () => {
         this.ratesInit();
       }
     );
   };
   render() {
-    console.log(this.state);
     return (
       <Fragment>
         <Paper>
@@ -109,17 +113,17 @@ class ExchangeRates extends Component {
               </TableHead>
               <TableBody>
                 {Object.keys(this.state.rates).map(row => (
-                  <TableRow>
+                  <TableRow key={row}>
                     <TableCell>
                       {row}{" "}
                       {this.state.rates[row].favor ? (
                         <StarIcon onClick={() => this.unsetFavor(row)} />
                       ) : (
-                        <StarBorderIcon onClick={() => this.setFavor(row)} />
-                      )}
+                          <StarBorderIcon onClick={() => this.setFavor(row)} />
+                        )}
                     </TableCell>
                     <TableCell align="right">
-                      {this.state.rates[row].value}
+                      {this.state.rates[row].value.toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -133,10 +137,10 @@ class ExchangeRates extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     baseCurr: state.baseCurr,
     rates: state.rates,
+    favor: state.favor
   };
 };
 

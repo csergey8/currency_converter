@@ -14,11 +14,26 @@ export default (state = stateInitial, action) => {
         ...state,
         rates: action.payload
       }
-      case 'SET_BASE_CURR':
-        return {
-          ...state,
-          baseCurr: action.payload
-        }
+    case 'SET_BASE_CURR':
+      return {
+        ...state,
+        baseCurr: action.payload
+      }
+    case 'GET_FAVORITE_CURRENCY':
+      return {
+        ...state,
+        favor: action.payload
+      }
+    case 'SET_FAVORITE_CURRENCY':
+      return {
+        ...state,
+        favor: action.payload
+      }
+    case 'UNSET_FAVORITE_CURRENCY':
+      return {
+        ...state,
+        favor: action.payload
+      }
 
     default:
       return {
